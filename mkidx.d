@@ -15,14 +15,14 @@ import std.stdio;
   byte positions to find file system coordinates to 
   fasta records for random access
 */
-int[][string] findBytePositionsByLine(string fasta)
+int[2][string] findBytePositionsByLine(string fasta)
 {
 	bool first = true;
 	string buffer;
 	string prevheader;
 	int curbytepos;
 	int prevbytepos;
-	int[][string] database;
+	int[2][string] database;
 	File fastaFile = File(fasta, "rb");
 
 	/* 
@@ -60,7 +60,7 @@ int[][string] findBytePositionsByLine(string fasta)
 }
 
 /* Writes database to simple text file*/
-void writeDatabase(int[][string] database, string filename)
+void writeDatabase(int[2][string] database, string filename)
 {
 	File outFile = File(filename, "w");
 
