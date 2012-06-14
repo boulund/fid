@@ -8,10 +8,10 @@
 */
 
 import std.getopt;
-import std.string;
+//import std.string;
 import std.stdio;
 import std.file;
-//import std.regex;
+import std.regex;
 
 
 
@@ -49,9 +49,24 @@ void matchSeq()
  Random access in FASTA file via indexed
  byte positions in database
 */
-void printSeq(int[2][string] database, string outfilename)
+void printSeq(int[2][string] database, string fidName, string[] seqret, string outfilename)
 {
-
+	File fidx = File(fidName, "rb");
+	//writeln("Printing sequences to stdout");
+	foreach (string seq; seqret)
+	{
+		try
+		{
+			// Seek to database[seq][0]
+			// Read and print database[seq][1]-database[seq][0] bytes
+			writefln("%s %s %s",seq, database[seq][0], database[seq][1]);
+		}
+		catch (Error e)
+		{
+			writeln("ERROR Key not in database: "~seq);
+			//writeln(e);
+		}
+	}
 }
 
 
@@ -83,6 +98,11 @@ int main(string[] args)
 		printHelp();
 		return 0;
 	}
+	else if ((args.length > 1) & (args.length < 3))
+	{
+		writeln("Need at least one sequence ID to retrieve!");
+		printHelp();
+	}
 	try
 	{
 		getopt(args,
@@ -106,6 +126,7 @@ int main(string[] args)
 
 	database = readFID(args[1]);
 
+	printSeq(database, args[1],  args[2..$], fileOut);
 
 
 	return 0;
