@@ -13,17 +13,18 @@ import std.stdio;
 /*
   Reads a FASTA file line by line and counts
   byte positions to find file system coordinates to 
-  fasta records for random access
+  fasta records for random access.
+  Writes space-separated index to text file
 */
-int[2][string] findBytePositionsByLine(string fasta)
+void findBytePositionsByLine(string fasta, string filename)
 {
 	bool first = true;
 	string buffer;
 	string prevheader;
-	int curbytepos;
-	int prevbytepos;
-	int[2][string] database;
+	ulong curbytepos;
+	ulong prevbytepos;
 	File fastaFile = File(fasta, "rb");
+	File databaseFile = File(filename, "wb");
 
 	/* 
 	  Go through the file, line by line, and store byte positions
@@ -45,7 +46,10 @@ int[2][string] findBytePositionsByLine(string fasta)
 		}
 		else if (buffer[0] == '>')
 		{
-			database[prevheader] = [prevbytepos, curbytepos];
+			// Write record to disk
+			databaseFile.writefln("%s %s %s",
+				prevheader, prevbytepos, curbytepos);
+
 			prevbytepos = curbytepos;
 			prevheader = buffer.split(" ")[0][1..$];
 		}
@@ -53,25 +57,15 @@ int[2][string] findBytePositionsByLine(string fasta)
 		buffer = fastaFile.readln();
 	}
 
-	/* Add the final FASTA record to the database before returning */
-	database[prevheader] = [prevbytepos, cast(int) fastaFile.size()];
-
-	return database;
+	/* Print the final fasta record information */
+	databaseFile.writefln("%s %s %s", 
+		prevheader, prevbytepos, cast(int) fastaFile.size());
+	
+	return;
 }
 
-/* Writes database to simple text file*/
-void writeDatabase(int[2][string] database, string filename)
-{
-	File outFile = File(filename, "w");
-
-	foreach (key, pos; database)
-	{
-		outFile.writefln("%s %s %s", key, pos[0], pos[1]);
-	}
-}
 
 void main(string[] args)
 {
-	auto database = findBytePositionsByLine(args[1]);
-	writeDatabase(database, args[1]~".fidx");	
+	findBytePositionsByLine(args[1], args[1]~".fidx");
 }
