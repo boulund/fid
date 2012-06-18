@@ -46,9 +46,10 @@ void findBytePositionsByLine(string fasta, string filename)
 		}
 		else if (buffer[0] == '>')
 		{
-			// Write record to disk
+			// Write record to disk, format:
+			// ^HEADER STARTPOS LENGTH$
 			databaseFile.writefln("%s %s %s",
-				prevheader, prevbytepos, curbytepos);
+				prevheader, prevbytepos, curbytepos-prevbytepos+1);
 
 			prevbytepos = curbytepos;
 			prevheader = buffer.split(" ")[0][1..$];
