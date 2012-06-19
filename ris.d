@@ -47,7 +47,7 @@ void matchSeq()
 
 /*
  Random access in FASTA file via indexed
- byte positions in database
+ byte positions from database
 */
 void printSeq(int[2][string] database, string fidName, string[] seqret, string outfilename)
 {
