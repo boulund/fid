@@ -18,15 +18,15 @@ import std.regex;
 /*
  Read FASTA index (FID) database from file
 */
-int[2][string] readFID(string filename)
+ulong[2][string] readFID(string filename)
 {
-	int[2][string] database;
+	ulong[2][string] database;
 
 	/* 
 	  Read formatted lines
 	  ^HEADER STARTPOS ENDPOS$
 	*/
-	auto records = slurp!(string, int, int)(filename, "%s %s %s");
+	auto records = slurp!(string, ulong, ulong)(filename, "%s %s %s");
 	foreach (record; records)
 	{
 		database[record[0]] = [record[1], record[2]];
@@ -49,7 +49,7 @@ void matchSeq()
  Random access in FASTA file via indexed
  byte positions from database
 */
-void printSeq(int[2][string] database, string fidName, string[] seqret, string outfilename)
+void printSeq(ulong[2][string] database, string fidName, string[] seqret, string outfilename)
 {
 	File fidx = File(fidName, "rb");
 	//writeln("Printing sequences to stdout");
@@ -63,7 +63,7 @@ void printSeq(int[2][string] database, string fidName, string[] seqret, string o
 			// Read and print database[seq][1] bytes
 			char[] buffer = new char[](database[seq][1]);
 			char[] buffer2 = fidx.rawRead(buffer);
-			writeln(buffer2);
+			write(buffer2);
 		}
 		catch (Error e)
 		{
@@ -94,7 +94,7 @@ int main(string[] args)
 	bool help;
 	string fileOut = "";
 	string searchReg = "";
-	int[2][string] database;
+	ulong[2][string] database;
 	
 	/* Parse command line options and arguments */
 	if (args.length < 2)
