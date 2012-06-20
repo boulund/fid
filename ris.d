@@ -61,8 +61,8 @@ void printSeq(int[2][string] database, string fidName, string[] seqret, string o
 			fidx.seek(database[seq][0]);
 
 			// Read and print database[seq][1] bytes
-			char[] buffer = new char[](database[seq][1]);
-			char[] buffer2 = fidx.rawRead(buffer);
+			string buffer = new string(database[seq][1]);
+			string buffer2 = fidx.rawRead(buffer);
 			writeln(buffer2);
 		}
 		catch (Error e)
