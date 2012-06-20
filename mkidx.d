@@ -49,7 +49,7 @@ void findBytePositionsByLine(string fasta, string filename)
 			// Write record to disk, format:
 			// ^HEADER STARTPOS LENGTH$
 			databaseFile.writefln("%s %s %s",
-				prevheader, prevbytepos, curbytepos-prevbytepos+1);
+				prevheader, prevbytepos, curbytepos-prevbytepos);
 
 			prevbytepos = curbytepos;
 			prevheader = buffer.split(" ")[0][1..$];
@@ -60,7 +60,7 @@ void findBytePositionsByLine(string fasta, string filename)
 
 	/* Print the final fasta record information */
 	databaseFile.writefln("%s %s %s", 
-		prevheader, prevbytepos, cast(int) fastaFile.size());
+		prevheader, prevbytepos, curbytepos-prevbytepos);
 	
 	return;
 }

@@ -57,9 +57,13 @@ void printSeq(int[2][string] database, string fidName, string[] seqret, string o
 	{
 		try
 		{
-			// Seek to database[seq][0]
-			// Read and print database[seq][1]-database[seq][0] bytes
-			writefln("%s %s %s",seq, database[seq][0], database[seq][1]);
+			// Seek to start of current record (seq)
+			fidx.seek(database[seq][0]);
+
+			// Read and print database[seq][1] bytes
+			char[] buffer = new char[](database[seq][1]);
+			char[] buffer2 = fidx.rawRead(buffer);
+			writeln(buffer2);
 		}
 		catch (Error e)
 		{
@@ -126,7 +130,7 @@ int main(string[] args)
 
 	database = readFID(args[1]);
 
-	printSeq(database, args[1],  args[2..$], fileOut);
+	printSeq(database, args[1][0..$-5],  args[2..$], fileOut);
 
 
 	return 0;
