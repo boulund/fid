@@ -7,12 +7,12 @@
  Fredrik Boulund 20120614
 */
 
-import std.getopt;
+import std.getopt; // Parse command line arguments
 //import std.string;
-import std.stdio;
-import std.file;
-import std.regex;
-
+import std.stdio; // Stream handling
+import std.file; // File handles
+import std.regex; 
+import std.algorithm; // To sort keys
 
 
 /*
@@ -39,9 +39,33 @@ ulong[2][string] readFID(string filename)
 /*
  Match sequences in FID and output them
 */
-void matchSeq()
+void matchSeq(string searchRegs, ulong[2][string] database, string fidName, string outfilename)
 {
-
+	string[] seqret;
+	int matchCounter;
+	/*
+	 Find a match in the database for each regexp given
+	 on command line
+	*/
+	//foreach (string searchReg; searchRegs) // TODO: Implement multiple regexps
+	{
+		auto headerReg = regex(searchRegs);
+		// For each key in database, try match with regexp and store key for output
+		foreach (key; database.keys)
+		{
+			auto m = match(key, headerReg);
+			if (m)
+			{
+				seqret.length = matchCounter+1; //Increase the length of array
+				seqret[matchCounter] = key;
+				matchCounter++;
+			}
+		}
+	}
+	
+	sort(seqret);
+	/* Retrieve matched keys from database */
+	printSeq(database, fidName, seqret, outfilename);
 }
 
 
@@ -130,7 +154,10 @@ int main(string[] args)
 
 	database = readFID(args[1]);
 
-	printSeq(database, args[1][0..$-5],  args[2..$], fileOut);
+	if (searchReg == "")
+		printSeq(database, args[1][0..$-5],  args[2..$], fileOut);
+	else
+		matchSeq(searchReg, database, args[1][0..$-5], fileOut);
 
 
 	return 0;
