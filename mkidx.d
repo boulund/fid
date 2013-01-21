@@ -66,7 +66,16 @@ void findBytePositionsByLine(string fasta, string filename)
 }
 
 
-void main(string[] args)
+int main(string[] args)
 {
+	if(args.length < 2)
+	{
+		writeln("usage: mkidx <FASTAFILE>");
+		writeln("Create index for a regular FASTAFILE.");
+		writeln("Written in D programming language, Fredrik Boulund (c) 2012).");
+		writeln("No available options");
+		return 1;
+	}
 	findBytePositionsByLine(args[1], args[1]~".fidx");
+	return 0;
 }
